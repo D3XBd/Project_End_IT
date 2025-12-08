@@ -3,9 +3,9 @@
 
 # hardware || software || Progra
 .ESP32
--IR sensor 
--Ultrasonic sensor 
--LCD 16x2/OLED
+.IR sensor 
+(Ultrasonic sensor 
+=LCD 16x2/OLED
 
 Arduino ID
  Library
