@@ -15,8 +15,12 @@ ESP32, IR sensor, Ultrasonic sensor, LCD 16x2/OLED
 	•Adafruit_SSD1306
 
 
-Html, php, css, Js
+# ภาษาที่ใช้ 
+    Html, php, css, Js
 
+# Program 
+    xmpp
+    node.js
 
 # Path file
 xampp\htdocs\bottle-exchange\Proj
