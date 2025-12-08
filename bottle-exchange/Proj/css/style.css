@@ -1,0 +1,86 @@
+@import url('https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600&display=swap');
+
+body {
+  font-family: 'Prompt', sans-serif;
+  background: linear-gradient(135deg, #bff0ed, #ffbcd2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+
+.container {
+  background: #ffffffcc;
+  backdrop-filter: blur(8px);
+  padding: 35px 30px;
+  border-radius: 20px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  width: 330px;
+  text-align: center;
+  transition: transform 0.2s ease-in-out;
+}
+
+.container:hover {
+  transform: scale(1.02);
+}
+
+h2 {
+  color: transparent; 
+  margin-bottom: 20px;
+  font-weight: 600;
+
+  background: linear-gradient(100deg, #ebcc65, #007BFF);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+
+  background-clip: text; 
+}
+
+input, select {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  outline: none;
+  transition: border 0.3s, box-shadow 0.3s;
+}
+
+input:focus, select:focus {
+  border-color: #84fab0;
+  box-shadow: 0 0 8px rgba(132, 250, 176, 0.5);
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(90deg, #84fab0, #8fd3f4);
+  color: #fff;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.3s;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 12px rgba(132, 250, 176, 0.4);
+}
+
+a {
+  display: inline-block;
+  margin-top: 15px;
+  color: #007bff;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+a:hover {
+  text-decoration: underline;
+}
