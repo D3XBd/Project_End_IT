@@ -1,7 +1,7 @@
 # Project_End_IT
 # Update 08.12.25 
 
-# hardware || software || Progra
+# hardware || software || Program
 ESP32, IR sensor, Ultrasonic sensor, LCD 16x2/OLED
 
 # Arduino IDE Library
@@ -13,6 +13,7 @@ ESP32, IR sensor, Ultrasonic sensor, LCD 16x2/OLED
     •หน้าจอ LCD
 	•LiquidCrystal_I2C.h
 	•Adafruit_SSD1306
+
 
 Html, php, css, Js
 
