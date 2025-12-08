@@ -7,7 +7,7 @@ ESP32, IR sensor, Ultrasonic sensor, LCD 16x2/OLED
 # Arduino IDE Library
 		WiFi.h → เชื่อม WiFi
 		HTTPClient.h → POST ข้อมูลไป API
-เซนเซอร์ library เช่น
+//เซนเซอร์ library เช่น//
 	•IR / Ultrasonic
 	•HX711 loadcell
   •หน้าจอ LCD
