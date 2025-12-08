@@ -1,13 +1,13 @@
 # Project_End_IT
 # Update 08.12.25 
 
-~~hardware || software || Program~~
+#hardware || software || Progra
 -ESP32
 -IR sensor 
 -Ultrasonic sensor 
 -LCD 16x2/OLED
 
--Arduino ID
+#Arduino ID
   -Library
     •WiFi.h → เชื่อม WiFi
 	•HTTPClient.h → POST ข้อมูลไป API
