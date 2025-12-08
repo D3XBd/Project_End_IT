@@ -2,7 +2,7 @@
 # Update 08.12.25 
 
 # hardware || software || Program
-ESP32, IR sensor, Ultrasonic sensor, LCD 16x2/OLED
+	ESP32, IR sensor, Ultrasonic sensor, LCD 16x2/OLED
 
 # Arduino IDE Library
 		WiFi.h → เชื่อม WiFi
