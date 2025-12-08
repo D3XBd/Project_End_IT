@@ -2,7 +2,7 @@
 # Update 08.12.25 
 
 # hardware || software || Progra
--ESP32
+.ESP32
 -IR sensor 
 -Ultrasonic sensor 
 -LCD 16x2/OLED
