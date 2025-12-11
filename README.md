@@ -28,8 +28,8 @@
 
 # ขั้นตอนการนำเอาไปใช้กับPCอื่น
 		-โหลด xmpp and node.js จากนั้น run program xmpp ขึ้นมาแล้วกดStrat Apacahe and MySql
-		-จากนั้นให้แก้ database ของPCที่ใช้รัน xmpp โดยหลังจากรัน Apacahe and Mysql แล้ว ให้กด Admin ของ MySQL (URL TO GO: http://localhost/phpmyadmin/)
-		-runweb localhost/bottle-exchange\Proj/login.html || sigup.html
+			-จากนั้นให้แก้ database ของPCที่ใช้รัน xmpp โดยหลังจากรัน Apacahe and Mysql แล้ว ให้กด Admin ของ MySQL (URL TO GO: http://localhost/phpmyadmin/)
+			-ขั้นตอนการรันweb หาไฟล์ xmpp ที่ติดตั้งแล้วไปที่ folder"htdocs"สร้างFloderแล้วโหลดไฟล์ ("bottle-exchange.zip or bottle-exchange")แล้วเอาไปใส่ในfloder htdocs จากนั้นกด Admin ของ Apcahe จากนั้นเลือกตามนี้ bottle-exchange/Proj/login.html
 
 
 # Path file
