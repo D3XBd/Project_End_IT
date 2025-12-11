@@ -27,8 +27,8 @@
 
 
 # ขั้นตอนการนำเอาไปใช้กับPCอื่น
-		-โหลด xmpp and node.js จากนั้น run program xmpp ขึ้นมาแล้วกดStratสองอันแรก
-		-จากนั้นให้แก้ database ของPCที่ใช้รันใน phpMyAdmin โดยกดเข้าไปในอันที่สองของ xmpp จะเปิดหน้า browser url:localhos/phpmyadmin กด import database(file in github)
+		-โหลด xmpp and node.js จากนั้น run program xmpp ขึ้นมาแล้วกดStrat Apacahe and MySql
+		-จากนั้นให้แก้ database ของPCที่ใช้รัน xmpp โดยหลังจากรัน Apacahe and Mysql แล้ว ให้กด Admin ของ MySQL (URL TO GO: http://localhost/phpmyadmin/)
 		-runweb localhost/bottle-exchange\Proj/login.html || sigup.html
 
 
