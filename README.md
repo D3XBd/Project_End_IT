@@ -34,3 +34,60 @@
 
 # Path file
 	xampp\htdocs\bottle-exchange\Proj
+
+# code Arduino 
+	#include <WiFi.h>
+	#include <HTTPClient.h>
+
+	const char* ssid = "PCPun"; //YOUR_WIFI
+	const char* password = "123456789"; //YOUR_PASSWORD
+
+	// แก้เป็นโดเมนหรือ IP ของปั้น
+	String serverUrl = "http://192.168.1.1/bottle-exchange/Proj/updateBottle.php";
+
+	// ใส่ studentId ที่ login อยู่
+	String studentId = "1113";
+	
+	void setup() {
+  	Serial.begin(115200);
+
+  	WiFi.begin(ssid, password);
+  	Serial.print("Connecting WiFi");
+
+ 	 while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+ 	 }
+	
+	  Serial.println("\nWiFi connected");
+	}
+
+	void loop() {
+  	delay(5000);
+
+  	// จำลองว่ามีขวดเข้า
+  	Serial.println(">>> Simulate bottle detected");
+  	sendBottle(1);
+	}
+
+	void sendBottle(int bottle) {
+  	if (WiFi.status() == WL_CONNECTED) {
+    HTTPClient http;
+
+    String url = serverUrl + "?studentId=" + studentId + "&bottle=" + String(bottle);
+    http.begin(url);
+
+    int httpCode = http.GET();
+
+    Serial.print("HTTP Code: ");
+    Serial.println(httpCode);
+
+    if (httpCode > 0) {
+      String response = http.getString();
+      Serial.println("Response: " + response);
+    }
+
+    http.end();
+  	}
+	}
+
