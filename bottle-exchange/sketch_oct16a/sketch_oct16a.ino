@@ -1,14 +1,130 @@
-// กำหนดขา LED
-const int ledPin = 2;
+#include <WiFi.h>
+#include <HTTPClient.h>
+#include <LiquidCrystal_I2C.h>
+
+// ---------- WiFi ----------
+const char* ssid = "Home-sombat_2.4G";        // ชื่อ Wi-Fi (2.4GHz)
+const char* password = "sombat140197";     // รหัส Wi-Fi
+
+/* ---------- SERVER ---------- */
+String serverUrl = "http://192.168.1.239//bottle-exchange/Proj/updateBottle.php";
+
+/* ---------- LCD ---------- */
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+/* ---------- HC-SR04 ---------- */
+#define TRIG_PIN 26
+#define ECHO_PIN 18   // ผ่านตัวแบ่งแรงดันแล้ว
+
+/* ---------- SETTING ---------- */
+const int DETECT_DISTANCE = 10; // cm
+bool bottleDetected = false;
+int bottleCount = 0;
 
 void setup() {
-  // ตั้งขา LED เป็นขาออก
-  pinMode(ledPin, OUTPUT);
+  Serial.begin(115200);
+
+  pinMode(TRIG_PIN, OUTPUT);
+  pinMode(ECHO_PIN, INPUT);
+
+  /* LCD */
+  lcd.init();
+  lcd.backlight();
+  lcd.clear();
+  lcd.setCursor(0,0);
+  lcd.print("Bottle Exchange");
+  lcd.setCursor(0,1);
+  lcd.print("Connecting...");
+
+  /* WIFI */
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+
+  lcd.clear();
+  lcd.setCursor(0,0);
+  lcd.print("WiFi Connected");
+  delay(1000);
+
+  lcd.clear();
+  lcd.setCursor(0,0);
+  lcd.print("Status: READY");
+  lcd.setCursor(0,1);
+  lcd.print("Bottle: 0");
+}
+
+/* อ่านระยะทาง */
+long getDistanceCM() {
+  digitalWrite(TRIG_PIN, LOW);
+  delayMicroseconds(2);
+  digitalWrite(TRIG_PIN, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TRIG_PIN, LOW);
+
+  long duration = pulseIn(ECHO_PIN, HIGH, 30000);
+  if (duration == 0) return 999;
+
+  return duration * 0.034 / 2;
 }
 
 void loop() {
-  digitalWrite(ledPin, HIGH);  // เปิด LED
-  delay(1000);                  // รอ 1 วินาที
-  digitalWrite(ledPin, LOW);   // ปิด LED
-  delay(1000);                  // รอ 1 วินาที
+  long distance = getDistanceCM();
+  Serial.print("Distance: ");
+  Serial.println(distance);
+
+  /* ตรวจจับขวด */
+  if (distance < DETECT_DISTANCE && !bottleDetected) {
+    bottleDetected = true;
+    bottleCount++;
+
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print("Bottle Detected");
+    lcd.setCursor(0,1);
+    lcd.print("Bottle: ");
+    lcd.print(bottleCount);
+
+    sendToServer();
+  }
+
+  /* รีเซ็ตเมื่อเอาขวดออก */
+  if (distance > DETECT_DISTANCE + 5) {
+    bottleDetected = false;
+    lcd.setCursor(0,0);
+    lcd.print("Status: READY  ");
+  }
+
+  delay(300);
+}
+
+/* ยิงข้อมูลไปเว็บ */
+void sendToServer() {
+  if (WiFi.status() != WL_CONNECTED) return;
+
+  HTTPClient http;
+  http.begin(serverUrl);
+  http.addHeader("Content-Type", "application/x-www-form-urlencoded");
+
+  String postData = "bottle=1&coin=1.25";
+  int httpCode = http.POST(postData);
+
+  Serial.print("HTTP Code: ");
+  Serial.println(httpCode);
+
+  if (httpCode > 0) {
+    String response = http.getString();
+    Serial.print("Response: ");
+    Serial.println(response);
+
+    lcd.setCursor(0,0);
+    if (response.indexOf("SUCCESS") >= 0) {
+      lcd.print("Upload SUCCESS ");
+    } else {
+      lcd.print("Upload FAILED  ");
+    }
+  }
+
+  http.end();
 }

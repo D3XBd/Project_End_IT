@@ -1,54 +1,130 @@
 #include <WiFi.h>
 #include <HTTPClient.h>
+#include <LiquidCrystal_I2C.h>
 
-const char* ssid = "PCPun"; //YOUR_WIFI
-const char* password = "123456789"; //YOUR_PASSWORD
+// ---------- WiFi ----------
+const char* ssid = "Home-sombat_2.4G";        // ชื่อ Wi-Fi (2.4GHz)
+const char* password = "sombat140197";     // รหัส Wi-Fi
 
-// แก้เป็นโดเมนหรือ IP ของปั้น
-String serverUrl = "http://192.168.1.1/bottle-exchange/Proj/updateBottle.php";
+/* ---------- SERVER ---------- */
+String serverUrl = "http://192.168.1.239//bottle-exchange/Proj/updateBottle.php";
 
-// ใส่ studentId ที่ login อยู่
-String studentId = "1113";
+/* ---------- LCD ---------- */
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+/* ---------- HC-SR04 ---------- */
+#define TRIG_PIN 26
+#define ECHO_PIN 18   // ผ่านตัวแบ่งแรงดันแล้ว
+
+/* ---------- SETTING ---------- */
+const int DETECT_DISTANCE = 10; // cm
+bool bottleDetected = false;
+int bottleCount = 0;
 
 void setup() {
   Serial.begin(115200);
 
-  WiFi.begin(ssid, password);
-  Serial.print("Connecting WiFi");
+  pinMode(TRIG_PIN, OUTPUT);
+  pinMode(ECHO_PIN, INPUT);
 
+  /* LCD */
+  lcd.init();
+  lcd.backlight();
+  lcd.clear();
+  lcd.setCursor(0,0);
+  lcd.print("Bottle Exchange");
+  lcd.setCursor(0,1);
+  lcd.print("Connecting...");
+
+  /* WIFI */
+  WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
   }
 
-  Serial.println("\nWiFi connected");
+  lcd.clear();
+  lcd.setCursor(0,0);
+  lcd.print("WiFi Connected");
+  delay(1000);
+
+  lcd.clear();
+  lcd.setCursor(0,0);
+  lcd.print("Status: READY");
+  lcd.setCursor(0,1);
+  lcd.print("Bottle: 0");
+}
+
+/* อ่านระยะทาง */
+long getDistanceCM() {
+  digitalWrite(TRIG_PIN, LOW);
+  delayMicroseconds(2);
+  digitalWrite(TRIG_PIN, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TRIG_PIN, LOW);
+
+  long duration = pulseIn(ECHO_PIN, HIGH, 30000);
+  if (duration == 0) return 999;
+
+  return duration * 0.034 / 2;
 }
 
 void loop() {
-  delay(5000);
+  long distance = getDistanceCM();
+  Serial.print("Distance: ");
+  Serial.println(distance);
 
-  // จำลองว่ามีขวดเข้า
-  Serial.println(">>> Simulate bottle detected");
-  sendBottle(1);
+  /* ตรวจจับขวด */
+  if (distance < DETECT_DISTANCE && !bottleDetected) {
+    bottleDetected = true;
+    bottleCount++;
+
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print("Bottle Detected");
+    lcd.setCursor(0,1);
+    lcd.print("Bottle: ");
+    lcd.print(bottleCount);
+
+    sendToServer();
+  }
+
+  /* รีเซ็ตเมื่อเอาขวดออก */
+  if (distance > DETECT_DISTANCE + 5) {
+    bottleDetected = false;
+    lcd.setCursor(0,0);
+    lcd.print("Status: READY  ");
+  }
+
+  delay(300);
 }
 
-void sendBottle(int bottle) {
-  if (WiFi.status() == WL_CONNECTED) {
-    HTTPClient http;
+/* ยิงข้อมูลไปเว็บ */
+void sendToServer() {
+  if (WiFi.status() != WL_CONNECTED) return;
 
-    String url = serverUrl + "?studentId=" + studentId + "&bottle=" + String(bottle);
-    http.begin(url);
+  HTTPClient http;
+  http.begin(serverUrl);
+  http.addHeader("Content-Type", "application/x-www-form-urlencoded");
 
-    int httpCode = http.GET();
+  String postData = "bottle=1&coin=1.25";
+  int httpCode = http.POST(postData);
 
-    Serial.print("HTTP Code: ");
-    Serial.println(httpCode);
+  Serial.print("HTTP Code: ");
+  Serial.println(httpCode);
 
-    if (httpCode > 0) {
-      String response = http.getString();
-      Serial.println("Response: " + response);
+  if (httpCode > 0) {
+    String response = http.getString();
+    Serial.print("Response: ");
+    Serial.println(response);
+
+    lcd.setCursor(0,0);
+    if (response.indexOf("SUCCESS") >= 0) {
+      lcd.print("Upload SUCCESS ");
+    } else {
+      lcd.print("Upload FAILED  ");
     }
-
-    http.end();
   }
+
+  http.end();
 }

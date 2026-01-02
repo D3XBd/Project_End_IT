@@ -36,8 +36,32 @@ if (!$user) {
     <p><strong>รหัสนักศึกษา:<?php echo $user['studentId'];?></p>
     <p><strong>ระดับชั้น:</strong> <?php echo $user['grade']; ?></p>
     <p><strong>สาขา:</strong> <?php echo $user['major']; ?></p>
-    <p><strong>จำนวขวด:</strong> <?php echo $user['bottles']; ?></p>
-    <p><strong>คะแนน:</strong> <?php echo $user['points']; ?></p>
+    <p><strong>จำนวนขวด:</strong> <?php echo $user['bottles']; ?></p>
+    <p><strong>Coin:</strong> <?php echo $user['points']; ?></p>
+    <button onclick="startExchange()">เริ่มแลกขวด</button>
+<br>
+<script>
+function startExchange() {
+  fetch("setActiveUser.php")
+    .then(res => res.text())
+    .then(data => alert("เริ่มแลกขวดแล้ว"));
+}
+</script>
+<button onclick="endExchange()" style="background:red;color:white;">
+  จบการแลก
+</button>
+<br>
+<script>
+function endExchange() {
+  fetch("endExchange.php")
+    .then(res => res.text())
+    .then(data => {
+      alert("จบการแลกเรียบร้อย");
+      location.reload();
+    });
+}
+</script>
+<br>
     <a href="logout.php" class="btn">ออกจากระบบ</a>
   </div>
 </body>

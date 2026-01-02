@@ -1,28 +1,22 @@
 <?php
 include 'db.php';
 
-// รับค่าจาก ESP32
-$studentId = $_GET['studentId'];
-$bottle = $_GET['bottle']; // จำนวนขวดที่เพิ่มเข้ามา
-
-// ตรวจคะแนนปัจจุบัน
-$sql = "SELECT points, bottles FROM users WHERE studentId='$studentId'";
-$result = $conn->query($sql);
-$row = $result->fetch_assoc();
-
-$currentPoints = $row['points'];
-$currentBottles = $row['bottles'];
-
-// คิดคะแนน เช่น 1 ขวด = 1 คะแนน
-$newPoints = $currentPoints + ($bottle * 1);
-$newBottles = $currentBottles + $bottle;
-
-// อัปเดตกลับเข้า database
-$update = "UPDATE users SET points='$newPoints', bottles='$newBottles' WHERE studentId='$studentId'";
-
-if ($conn->query($update)) {
-    echo "OK";
-} else {
-    echo "ERROR";
+/* รับเฉพาะ POST */
+if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+    exit("POST ONLY");
 }
+
+/* เช็กข้อมูลจาก ESP32 */
+if (!isset($_POST['bottle']) || !isset($_POST['coin'])) {
+    exit("NO DATA FROM ESP32");
+}
+
+/* เช็ก user ที่กำลังใช้งาน */
+if (!file_exists("active_user.txt")) {
+    exit("NO ACTIVE USER");
+}
+
+$studentId = trim(file_get_contents("active_user.txt"));
+
+$bo
 ?>
