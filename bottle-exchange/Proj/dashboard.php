@@ -37,7 +37,7 @@ if (!$user) {
     <p><strong>ระดับชั้น:</strong> <?php echo $user['grade']; ?></p>
     <p><strong>สาขา:</strong> <?php echo $user['major']; ?></p>
     <p><strong>จำนวนขวด:</strong> <?php echo $user['bottles']; ?></p>
-    <p><strong>Coin:</strong> <?php echo $user['points']; ?></p>
+    <p><strong>Point:</strong> <?php echo $user['points']; ?></p>
     <button onclick="startExchange()">เริ่มแลกขวด</button>
 <br>
 <script>

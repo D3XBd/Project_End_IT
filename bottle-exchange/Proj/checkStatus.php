@@ -1,7 +1,7 @@
 <?php
-if (file_exists("active_user.txt")) {
-    echo "EXCHANGE";
-} else {
+if (!file_exists("exchange_state.txt")) {
     echo "IDLE";
+    exit;
 }
-?>
+
+echo trim(file_get_contents("exchange_state.txt"));

@@ -7,5 +7,6 @@ if (!isset($_SESSION['studentId'])) {
 }
 
 file_put_contents("active_user.txt", $_SESSION['studentId']);
-echo "ACTIVE SET";
-?>
+file_put_contents("exchange_state.txt", "EXCHANGE");
+
+echo "START EXCHANGE";
