@@ -6,8 +6,8 @@
 /* ================== CONFIG ================== */
 
 // 🔹 WiFi (Hotspot มือถือ หรือ WiFi บ้าน)
-const char* WIFI_SSID = "Home-sombat_2.4G";
-const char* WIFI_PASS = "sombat140197";
+const char* WIFI_SSID = "D3x";
+const char* WIFI_PASS = "11113333";
 
 // 🔹 Web Server (XAMPP)
 const char* STATUS_URL = "http://192.168.1.239/bottle-exchange/Proj/checkStatus.php";
