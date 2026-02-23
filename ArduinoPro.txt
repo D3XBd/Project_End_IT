@@ -1,5 +1,14 @@
-// ------------------ CONFIG ------------------
-Home-sombat_2.4G
-sombat140197
-http://192.168.1.239/bottle-exchange/Proj/checkStatus.php
-http://192.168.1.239/bottle-exchange/Proj/updateBottle.php
+/* ===== CONFIG test ===== */
+const char* ssid = "Home-sombat_2.4G";
+const char* password = "sombat140197";
+
+const char* CHECK_STATUS_URL = "http://192.168.1.239/bottle-exchange/Proj/checkStatus.php";
+const char* UPDATE_URL = "http://192.168.1.239/bottle-exchange/Proj/updateBottle.php";
+
+// ================== WIFI ==================
+const char* ssid = "D3x";
+const char* password = "11113333";
+
+// ================== SERVER ==================
+const char* CHECK_STATUS_URL = "http://172.20.10.13/bottle-exchange/Proj/checkStatus.php";
+const char* UPDATE_URL       = "http://172.20.10.13/bottle-exchange/Proj/updateBottle.php";

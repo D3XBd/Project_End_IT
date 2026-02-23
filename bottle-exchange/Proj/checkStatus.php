@@ -4,4 +4,5 @@ if (!file_exists("exchange_state.txt")) {
     exit;
 }
 
-echo trim(file_get_contents("exchange_state.txt"));
+$status = trim(file_get_contents("exchange_state.txt"));
+echo $status === "" ? "IDLE" : $status;

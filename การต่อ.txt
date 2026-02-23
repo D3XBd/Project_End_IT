@@ -1,0 +1,17 @@
+การต่อ
+Power Supply 5V 5A  +5V → ต่อเข้ารางแดงของ Breadboard +5V → ต่อเข้ารางแดงของ Breadboard
+ESP32 5V จากรางแดง → ขา 5V หรือ VIN ของ ESP32 5V จากรางแดง → ขา 5V หรือ VIN ของ ESP32
+LCD I2C VCC → รางแดง (5V) GND → รางน้ำเงิน SDA → D21 SCL → D22
+HC-SR04 VCC → 5V (รางแดง) GND → GND TRIG → D5 
+          ECHO
+      |
+      |---- R1 (1kΩ) ----+----> ไป ESP32 (เช่น D18)
+                         |
+                      R2 (2kΩ)
+                         |
+                        GND
+
+
+
+
+

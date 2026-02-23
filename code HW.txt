@@ -1,0 +1,174 @@
+#include <WiFi.h>
+#include <HTTPClient.h>
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+
+/* ===== CONFIG ===== */
+const char* WIFI_SSID = "D3x";
+const char* WIFI_PASS = "11113333";
+
+const char* STATUS_URL = "http://172.20.10.13/bottle-exchange/Proj/checkStatus.php";
+const char* UPDATE_URL = "http://172.20.10.13/bottle-exchange/Proj/updateBottle.php";
+
+#define TRIG_PIN 5
+#define ECHO_PIN 18
+
+const float BOTTLE_DISTANCE_CM = 15.0;
+const unsigned long HOLD_TIME = 300;
+/* ================== */
+
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+bool exchangeMode = false;
+bool bottleDetected = false;
+unsigned long detectStartTime = 0;
+unsigned long lastStatusCheck = 0;
+
+/* ===== SETUP ===== */
+void setup() {
+  Serial.begin(115200);
+
+  pinMode(TRIG_PIN, OUTPUT);
+  pinMode(ECHO_PIN, INPUT);
+
+  lcd.init();
+  lcd.backlight();
+  lcd.clear();
+  lcd.print("Starting...");
+
+  connectWiFi();
+
+  lcd.clear();
+  lcd.print("Ready");
+}
+
+/* ===== LOOP ===== */
+void loop() {
+  if (millis() - lastStatusCheck > 2000) {
+    checkStatusFromWeb();
+    lastStatusCheck = millis();
+  }
+
+  if (exchangeMode) {
+    handleBottleDetection();
+  } else {
+    showIdle();
+  }
+
+  delay(100);
+}
+
+/* ===== FUNCTIONS ===== */
+
+void connectWiFi() {
+  WiFi.begin(WIFI_SSID, WIFI_PASS);
+  Serial.print("Connecting WiFi");
+
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+
+  Serial.println("\nWiFi Connected");
+}
+
+void checkStatusFromWeb() {
+  if (WiFi.status() != WL_CONNECTED) return;
+
+  HTTPClient http;
+  http.begin(STATUS_URL);
+  int code = http.GET();
+
+  Serial.print("CHECK STATUS | HTTP CODE: ");
+  Serial.println(code);
+
+  if (code == 200) {
+    String status = http.getString();
+    status.trim();
+
+    Serial.print("RAW STATUS: [");
+    Serial.print(status);
+    Serial.println("]");
+
+    exchangeMode = (status == "EXCHANGE");
+  }
+
+  http.end();
+}
+
+void showIdle() {
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("IDLE");
+  lcd.setCursor(0, 1);
+  lcd.print("Waiting...");
+}
+
+float readDistance() {
+  long duration;
+  digitalWrite(TRIG_PIN, LOW);
+  delayMicroseconds(2);
+  digitalWrite(TRIG_PIN, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TRIG_PIN, LOW);
+
+  duration = pulseIn(ECHO_PIN, HIGH, 25000);
+  if (duration == 0) return 999;
+
+  return duration * 0.034 / 2;
+}
+
+void handleBottleDetection() {
+  float distance = readDistance();
+
+  Serial.print("Distance: ");
+  Serial.println(distance);
+
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("EXCHANGE");
+  lcd.setCursor(0, 1);
+  lcd.print("D:");
+  lcd.print(distance);
+
+  if (distance < BOTTLE_DISTANCE_CM) {
+    if (!bottleDetected) {
+      bottleDetected = true;
+      detectStartTime = millis();
+    }
+
+    if (millis() - detectStartTime > HOLD_TIME) {
+      Serial.println("BOTTLE COUNTED");
+      sendBottle();
+
+      bottleDetected = false;
+      while (readDistance() < BOTTLE_DISTANCE_CM) {
+        delay(50);
+      }
+    }
+  } else {
+    bottleDetected = false;
+  }
+}
+
+void sendBottle() {
+  if (WiFi.status() != WL_CONNECTED) return;
+
+  HTTPClient http;
+  http.begin(UPDATE_URL);
+  http.addHeader("Content-Type", "application/x-www-form-urlencoded");
+
+  String data = "bottle=1&coin=0.5";
+  int code = http.POST(data);
+
+  Serial.print("SEND BOTTLE | HTTP CODE: ");
+  Serial.println(code);
+
+  if (code > 0) {
+    String response = http.getString();
+    Serial.print("SERVER RESPONSE: ");
+    Serial.println(response);
+  }
+
+  http.end();
+}
